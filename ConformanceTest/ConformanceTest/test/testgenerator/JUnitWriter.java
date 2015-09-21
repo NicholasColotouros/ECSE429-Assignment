@@ -5,20 +5,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Used to output the test cases.
+ * Used to output the test cases as a java file.
  * Used by the test generator.
  */
 public class JUnitWriter 
 {
-	public String PackageName;
+	private String PackageName;
 	private ArrayList<String> PackageImports;
-	public String ClassName;
-	// TODO: test cases
+	private String ClassName;
+	// TODO: add representation of global vars
+	private ArrayList<JUnitTest> Tests;
 	
-	
-	public JUnitWriter() 
+	public JUnitWriter(String packageName, String className) 
 	{
+		PackageName = packageName;
+		ClassName = className;
+		
 		PackageImports = new ArrayList<String>();
+		Tests = new ArrayList<JUnitTest>();
 		
 		// Import basic JUnit stuff
 		PackageImports.add("static org.junit.Assert.*");
@@ -36,6 +40,16 @@ public class JUnitWriter
 	public void RemovePackageImport(String p)
 	{
 		PackageImports.remove(p);
+	}
+	
+	public void AddTest(JUnitTest j)
+	{
+		Tests.add(j);
+	}
+	
+	public void RemoveTest(JUnitTest j)
+	{
+		Tests.remove(j);
 	}
 	
 	public void Save()
@@ -58,8 +72,11 @@ public class JUnitWriter
 		// basic constructor
 		output = output + "\n" + indent(indentation) + "public " + ClassName + "(){}\n\n";
 		
-		// TODO: TESTS
-		
+		// Add the tests
+		for(JUnitTest j : Tests)
+		{
+			output = output + j.ToString(indentation) + "\n\n";
+		}
 		
 		// Close the class
 		indentation--;
@@ -92,9 +109,7 @@ public class JUnitWriter
 	// TODO: remove before submitting
 	public static void main(String[] args) 
 	{
-		JUnitWriter x = new JUnitWriter();
-		x.PackageName = "Rush";
-		x.ClassName = "GeddyLee";
+		JUnitWriter x = new JUnitWriter("Rush", "GeddyLee");
 		x.AddPackageImport("java.io.FileWriter");
 		x.AddPackageImport("java.util.ArrayList");
 		x.AddPackageImport("com.thoughtworks.xstream.XStream");
