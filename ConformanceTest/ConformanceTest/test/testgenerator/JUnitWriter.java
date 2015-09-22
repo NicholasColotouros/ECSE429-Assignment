@@ -1,5 +1,6 @@
 package testgenerator;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class JUnitWriter
 	public JUnitWriter(String packageName, String className) 
 	{
 		PackageName = packageName;
-		ClassName = className;
+		ClassName = "GeneratedTest" + className.split("\\.", 2)[0];
 		
 		PackageImports = new ArrayList<String>();
 		Tests = new ArrayList<JUnitTest>();
@@ -64,13 +65,13 @@ public class JUnitWriter
 		}
 		
 		// Class and global variables
-		output = output + "\n" + "public class " + ClassName + "{" + "\n\n";
+		output = output + "\n" + "public class " + ClassName + " {" + "\n";
 		indentation++;
 		
 		// TODO: global variables
 		
 		// basic constructor
-		output = output + "\n" + indent(indentation) + "public " + ClassName + "(){}\n\n";
+		output = output + "\n" + indent(indentation) + "public " + ClassName + "() {}\n\n";
 		
 		// Add the tests
 		for(JUnitTest j : Tests)
@@ -83,14 +84,16 @@ public class JUnitWriter
 		output = output + indent(indentation) + "}";
 		
 		// Write the file
-		// TODO: check if file/directory exists, make it, override otherwise
-		try (FileWriter o = new FileWriter(ClassName + ".java");)
+		String filepath = "test\\" + PackageName.replace('.', '\\') + "\\";
+		File file = new File(filepath);
+		file.mkdirs();
+		
+		try (FileWriter o = new FileWriter(filepath + ClassName + ".java");)
 		{
 			o.write(output);
 		} 
 		catch (IOException e) 
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -103,16 +106,5 @@ public class JUnitWriter
 			output = output + "\t";
 		}
 		return output;
-	}
-	
-	// For debugging/testing purposes
-	// TODO: remove before submitting
-	public static void main(String[] args) 
-	{
-		JUnitWriter x = new JUnitWriter("Rush", "GeddyLee");
-		x.AddPackageImport("java.io.FileWriter");
-		x.AddPackageImport("java.util.ArrayList");
-		x.AddPackageImport("com.thoughtworks.xstream.XStream");
-		x.Save();
 	}
 }
