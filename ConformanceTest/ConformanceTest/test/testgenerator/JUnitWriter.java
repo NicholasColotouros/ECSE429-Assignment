@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ca.mcgill.ecse429.conformancetest.statemodel.Transition;
+
 /**
  * Used to output the test cases as a java file.
  * Used by the test generator.
@@ -13,24 +15,29 @@ public class JUnitWriter
 {
 	private String PackageName;
 	private ArrayList<String> PackageImports;
-	private String ClassName;
-	// TODO: add representation of global vars
-	private ArrayList<JUnitTest> Tests;
+	private String ClassName;		// The class being tested
+	private String TestClassName;	// The class that is doing the testing (ie the one being generated)
+	private ArrayList<ArrayList<Transition>> Paths; // Arraylist of the paths to be made into test methods
+	private static String GVarName = "SMachine"; // The global variable name to be used that holds the state machine
+
+	private static String ConditionTODO = "// TODO: The above transition has a condition.";
+	private static String ActionTODO = "// TODO: Check that the action holds.";
 	
-	public JUnitWriter(String packageName, String className) 
+	
+	public JUnitWriter(String packageName, String className, ArrayList<ArrayList<Transition>> paths) 
 	{
 		PackageName = packageName;
-		ClassName = "GeneratedTest" + className.split("\\.", 2)[0];
-		
+		ClassName = className.split("\\.", 2)[0];
+		TestClassName = "GeneratedTest" + ClassName;
+		Paths = paths;
 		PackageImports = new ArrayList<String>();
-		Tests = new ArrayList<JUnitTest>();
 		
 		// Import basic JUnit stuff
 		PackageImports.add("static org.junit.Assert.*");
 		PackageImports.add("org.junit.After");
 		PackageImports.add("org.junit.Before");
-		PackageImports.add("org.junit.BeforeClass");
 		PackageImports.add("org.junit.Test");
+		PackageImports.add(PackageName + ".*");
 	}
 
 	public void AddPackageImport(String p)
@@ -41,16 +48,6 @@ public class JUnitWriter
 	public void RemovePackageImport(String p)
 	{
 		PackageImports.remove(p);
-	}
-	
-	public void AddTest(JUnitTest j)
-	{
-		Tests.add(j);
-	}
-	
-	public void RemoveTest(JUnitTest j)
-	{
-		Tests.remove(j);
 	}
 	
 	public void Save()
@@ -65,19 +62,21 @@ public class JUnitWriter
 		}
 		
 		// Class and global variables
-		output = output + "\n" + "public class " + ClassName + " {" + "\n";
+		output = output + "\n" + "public class " + TestClassName + " {" + "\n";
 		indentation++;
 		
-		// TODO: global variables
+		output = output + indent(indentation) +  ClassName + " " + GVarName +";\n";
 		
-		// basic constructor
-		output = output + "\n" + indent(indentation) + "public " + ClassName + "() {}\n\n";
-		
+		// Setup and teardown methods
+		output = output + "\n" + indent(indentation) + "@Before\n";
+		output = output + indent(indentation) + "public void Setup() {" + "\n";
+		indentation++;
+		output = output + indent(indentation) + GVarName + " = new " + ClassName + "();\n";
+		indentation--;
+		output = output + indent(indentation) + "}\n\n";
+
 		// Add the tests
-		for(JUnitTest j : Tests)
-		{
-			output = output + j.ToString(indentation) + "\n\n";
-		}
+		output = output + "\n" + GenerateTestCases(indentation);
 		
 		// Close the class
 		indentation--;
@@ -88,7 +87,7 @@ public class JUnitWriter
 		File file = new File(filepath);
 		file.mkdirs();
 		
-		try (FileWriter o = new FileWriter(filepath + ClassName + ".java");)
+		try (FileWriter o = new FileWriter(filepath + TestClassName + ".java");)
 		{
 			o.write(output);
 		} 
@@ -106,5 +105,55 @@ public class JUnitWriter
 			output = output + "\t";
 		}
 		return output;
+	}
+	
+	private String GenerateTestCases(int indentation)
+	{
+		String ret = "";
+		int tripNumber = 0;
+		
+		// For each path
+		for(ArrayList<Transition> path : Paths)
+		{
+			tripNumber++;
+			ret = ret + indent(indentation) + "public void testTrip" + tripNumber + "() {\n";
+			indentation++;
+	
+			// For each transition in the path
+			for(Transition t : path)
+			{
+				// If we see @ it must be the constructor
+				if(t.getEvent().contains("@"))
+				{
+					ret = ret + indent(indentation) + GVarName + " = new " + ClassName + "();\n";
+				}
+				
+				// Otherwise it's a method call
+				else
+				{
+					ret = ret + indent(indentation) + GVarName + "." + t.getEvent() + "();\n";
+				}
+				ret = ret + indent(indentation) + "assertTrue(\"Transition " + t.getTo().getName() + " not reached.\", false);\n";
+				// TODO: finish the above assert statement
+				
+				// Now check for whether or not we're inserting comments
+				String condition = t.getCondition();
+				String action = t.getAction();
+				if(condition == null || condition.equals(""))
+				{
+					ret = ret + indent(indentation) + ConditionTODO + "\n";
+				}
+				
+				if(action == null || action.equals(""))
+				{
+					ret = ret + indent(indentation) + ActionTODO + "\n";
+				}
+				ret = ret + "\n";
+			}
+						
+			indentation--;
+			ret = ret + "\n" + indent(indentation) + "}\n\n";
+		}
+		return ret;
 	}
 }

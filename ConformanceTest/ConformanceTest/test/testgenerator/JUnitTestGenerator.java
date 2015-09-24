@@ -1,44 +1,66 @@
 package testgenerator;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
+import ca.mcgill.ecse429.conformancetest.statemodel.State;
 import ca.mcgill.ecse429.conformancetest.statemodel.StateMachine;
+import ca.mcgill.ecse429.conformancetest.statemodel.Transition;
 import ca.mcgill.ecse429.conformancetest.statemodel.persistence.PersistenceStateMachine;
 
+/**
+ * The main class for generating tests.
+ */
 public class JUnitTestGenerator 
 {
-	public static String XML_PATH = "ccoinbox.xml";
+	private String XML_Path = "ccoinbox.xml";
 	
-	private JUnitWriter writer;
-	private StateMachine machineInstance;
+	private JUnitWriter Writer;
+	private StateMachine MachineInstance;
 	
-	public JUnitTestGenerator() {}
-	
-	public void FillInClassInfo()
+	public JUnitTestGenerator(String xmlPath) 
 	{
-		PersistenceStateMachine.loadStateMachine(XML_PATH);
-		machineInstance = StateMachine.getInstance();
-		
-		writer = new JUnitWriter(machineInstance.getPackageName(), machineInstance.getClassName());
+		if(xmlPath != null)
+			XML_Path = xmlPath;
+
+		PersistenceStateMachine.loadStateMachine(XML_Path);
+		MachineInstance = StateMachine.getInstance();
 	}
 	
-	public void GenerateTests()
+	public void GenerateTestClass()
 	{
+		StateNode startNode = StateNode.GenerateTree(MachineInstance);
+		ArrayList<ArrayList<Transition>> paths = new ArrayList<ArrayList<Transition>>();
 		
-	}
-	
-	public void SaveTests ()
-	{
-		// TODO
-		writer.Save();
+		// TODO generate the paths
+
+		Writer = new JUnitWriter(MachineInstance.getPackageName(), MachineInstance.getClassName(), paths);
+		Writer.Save();
 	}
 	
 	public static void main(String[] args) 
 	{
-		JUnitTestGenerator JUTG = new JUnitTestGenerator();
-		JUTG.FillInClassInfo();
-		JUTG.GenerateTests();
-		JUTG.SaveTests();
+		JUnitTestGenerator JUTG;
+		if(args.length > 0)
+		{
+			File f = new File(args[0]);
+			if(f.exists())
+			{
+				JUTG = new JUnitTestGenerator(args[0]);
+			}
+			else
+			{
+				System.out.println("ERROR: File not found");
+				return;
+			}
+		}
+		else
+		{
+			JUTG = new JUnitTestGenerator(null);
+		}
+		
+		JUTG.GenerateTestClass();
 	}
 
 }
