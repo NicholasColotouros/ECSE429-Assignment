@@ -2,9 +2,8 @@ package testgenerator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
-import ca.mcgill.ecse429.conformancetest.statemodel.State;
 import ca.mcgill.ecse429.conformancetest.statemodel.StateMachine;
 import ca.mcgill.ecse429.conformancetest.statemodel.Transition;
 import ca.mcgill.ecse429.conformancetest.statemodel.persistence.PersistenceStateMachine;
@@ -14,7 +13,7 @@ import ca.mcgill.ecse429.conformancetest.statemodel.persistence.PersistenceState
  */
 public class JUnitTestGenerator 
 {
-	private String XML_Path = "ccoinbox.xml";
+	private String XML_Path;
 	
 	private JUnitWriter Writer;
 	private StateMachine MachineInstance;
@@ -23,6 +22,8 @@ public class JUnitTestGenerator
 	{
 		if(xmlPath != null)
 			XML_Path = xmlPath;
+		else
+			XML_Path = "ccoinbox.xml";
 
 		PersistenceStateMachine.loadStateMachine(XML_Path);
 		MachineInstance = StateMachine.getInstance();
@@ -30,13 +31,62 @@ public class JUnitTestGenerator
 	
 	public void GenerateTestClass()
 	{
-		StateNode startNode = StateNode.GenerateTree(MachineInstance);
-		ArrayList<ArrayList<Transition>> paths = new ArrayList<ArrayList<Transition>>();
-		
-		// TODO generate the paths
+		ArrayList<ArrayList<Transition>> paths = GeneratePaths();
 
 		Writer = new JUnitWriter(MachineInstance.getPackageName(), MachineInstance.getClassName(), paths);
 		Writer.Save();
+	}
+	
+	/**
+	 * Uses the graph generated and makes the round trips using DFS.
+	 * @return An arraylist of all paths for the test.
+	 */
+	private ArrayList<ArrayList<Transition>> GeneratePaths()
+	{
+		TransitionNode startNode = TransitionNode.GenerateTree(MachineInstance);
+		ArrayList<ArrayList<Transition>> paths = new ArrayList<ArrayList<Transition>>();
+		
+		Stack<TransitionNode> nodeStack = new Stack<TransitionNode>();
+		nodeStack.push(startNode);
+		startNode.Visited = true;
+		
+		ArrayList<Transition> currentPath = new ArrayList<Transition>();
+		
+		while(!nodeStack.empty())
+		{
+			TransitionNode currentNode = nodeStack.pop();
+			Transition prevNode;
+
+			if(currentPath.size() > 0)
+			{
+				prevNode = currentPath.get(currentPath.size() - 1);
+				while(!prevNode.getTo().getName().equals(currentNode.Value.getFrom().getName()))
+				{
+					currentPath.remove(currentPath.size() - 1); // remove the last one
+					prevNode = currentPath.get(currentPath.size() - 1);
+				}
+			}
+			currentPath.add(currentNode.Value);
+
+			boolean LeafReached = true;
+			for(TransitionNode neighbour : currentNode.Children)
+			{
+				if(!neighbour.Visited)
+				{
+					nodeStack.push(neighbour);
+					neighbour.Visited = true;
+					LeafReached = false;
+				}
+			}
+			
+			// If we reached a leaf in our round trip path tree, save a copy of the path
+			if(LeafReached)
+			{
+				paths.add(new ArrayList<Transition>(currentPath));
+			}
+		}
+		
+		return paths;
 	}
 	
 	public static void main(String[] args) 

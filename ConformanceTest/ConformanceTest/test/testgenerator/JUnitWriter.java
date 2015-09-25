@@ -34,10 +34,8 @@ public class JUnitWriter
 		
 		// Import basic JUnit stuff
 		PackageImports.add("static org.junit.Assert.*");
-		PackageImports.add("org.junit.After");
 		PackageImports.add("org.junit.Before");
 		PackageImports.add("org.junit.Test");
-		PackageImports.add(PackageName + ".*");
 	}
 
 	public void AddPackageImport(String p)
@@ -116,6 +114,7 @@ public class JUnitWriter
 		for(ArrayList<Transition> path : Paths)
 		{
 			tripNumber++;
+			ret = ret + indent(indentation) + "@Test\n";
 			ret = ret + indent(indentation) + "public void testTrip" + tripNumber + "() {\n";
 			indentation++;
 	
@@ -133,18 +132,18 @@ public class JUnitWriter
 				{
 					ret = ret + indent(indentation) + GVarName + "." + t.getEvent() + "();\n";
 				}
-				ret = ret + indent(indentation) + "assertTrue(\"Transition " + t.getTo().getName() + " not reached.\", false);\n";
-				// TODO: finish the above assert statement
+				ret = ret + indent(indentation) + "assertTrue(\"State " + t.getTo().getName() + " not reached. The current state is: \" + " + GVarName + ".getState(), "
+						+ GVarName + ".getState().toString().equals(\"" + t.getTo().getName() + "\"));\n";
 				
 				// Now check for whether or not we're inserting comments
 				String condition = t.getCondition();
 				String action = t.getAction();
-				if(condition == null || condition.equals(""))
+				if(condition != null && !condition.equals(""))
 				{
 					ret = ret + indent(indentation) + ConditionTODO + "\n";
 				}
 				
-				if(action == null || action.equals(""))
+				if(action != null && !action.equals(""))
 				{
 					ret = ret + indent(indentation) + ActionTODO + "\n";
 				}

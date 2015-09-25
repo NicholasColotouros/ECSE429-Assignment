@@ -7,14 +7,15 @@
 <fullyQualifiedTypeName name="java.io.FileWriter"/>
 <fullyQualifiedTypeName name="testgenerator.CCoinBoxGenerator"/>
 <fullyQualifiedTypeName name="java.lang.Package"/>
-<fullyQualifiedTypeName name="testgenerator.JUnitWriter"/>
 <fullyQualifiedTypeName name="testgenerator.JUnitTestGenerator"/>
 <fullyQualifiedTypeName name="java.io.File"/>
-<fullyQualifiedTypeName name="java.util.List"/>
 <fullyQualifiedTypeName name="org.junit.AfterClass"/>
-<fullyQualifiedTypeName name="ca.mcgill.ecse429.conformancetest.statemodel.State"/>
 <fullyQualifiedTypeName name="ca.mcgill.ecse429.conformancetest.ccoinbox.CCoinBox"/>
+<fullyQualifiedTypeName name="ca.mcgill.ecse429.conformancetest.statemodel.State"/>
+<fullyQualifiedTypeName name="testgenerator.JUnitWriter"/>
+<fullyQualifiedTypeName name="java.util.Stack"/>
 <fullyQualifiedTypeName name="java.util.ArrayList"/>
 <fullyQualifiedTypeName name="ca.mcgill.ecse429.conformancetest.statemodel.Transition"/>
 <fullyQualifiedTypeName name="ca.mcgill.ecse429.conformancetest.statemodel.StateMachine"/>
+<fullyQualifiedTypeName name="java.util.List"/>
 </qualifiedTypeNameHistroy>
