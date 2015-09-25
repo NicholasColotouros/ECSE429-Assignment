@@ -50,11 +50,6 @@ public class GeneratedTestCCoinBox {
 		// TODO: Check that the action holds.
 
 		SMachine.vend();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: The above transition has a condition.
-		// TODO: Check that the action holds.
-
-		SMachine.vend();
 		assertTrue("State notAllowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("notAllowed"));
 		// TODO: The above transition has a condition.
 		// TODO: Check that the action holds.
@@ -74,11 +69,6 @@ public class GeneratedTestCCoinBox {
 
 		SMachine.addQtr();
 		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: Check that the action holds.
-
-		SMachine.vend();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: The above transition has a condition.
 		// TODO: Check that the action holds.
 
 		SMachine.vend();
@@ -103,11 +93,6 @@ public class GeneratedTestCCoinBox {
 		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
 		// TODO: Check that the action holds.
 
-		SMachine.vend();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: The above transition has a condition.
-		// TODO: Check that the action holds.
-
 		SMachine.addQtr();
 		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
 		// TODO: Check that the action holds.
@@ -129,15 +114,6 @@ public class GeneratedTestCCoinBox {
 		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
 		// TODO: Check that the action holds.
 
-		SMachine.vend();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: The above transition has a condition.
-		// TODO: Check that the action holds.
-
-		SMachine.addQtr();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: Check that the action holds.
-
 		SMachine.reset();
 		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
 		// TODO: Check that the action holds.
@@ -153,15 +129,6 @@ public class GeneratedTestCCoinBox {
 
 		SMachine.addQtr();
 		assertTrue("State notAllowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("notAllowed"));
-		// TODO: Check that the action holds.
-
-		SMachine.addQtr();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: Check that the action holds.
-
-		SMachine.vend();
-		assertTrue("State allowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("allowed"));
-		// TODO: The above transition has a condition.
 		// TODO: Check that the action holds.
 
 		SMachine.addQtr();
@@ -215,14 +182,6 @@ public class GeneratedTestCCoinBox {
 		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
 		// TODO: Check that the action holds.
 
-		SMachine.addQtr();
-		assertTrue("State notAllowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("notAllowed"));
-		// TODO: Check that the action holds.
-
-		SMachine.returnQtrs();
-		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
-		// TODO: Check that the action holds.
-
 		SMachine.reset();
 		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
 		// TODO: Check that the action holds.
@@ -233,18 +192,6 @@ public class GeneratedTestCCoinBox {
 	@Test
 	public void testTrip10() {
 		SMachine = new CCoinBox();
-		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
-		// TODO: Check that the action holds.
-
-		SMachine.addQtr();
-		assertTrue("State notAllowed not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("notAllowed"));
-		// TODO: Check that the action holds.
-
-		SMachine.returnQtrs();
-		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
-		// TODO: Check that the action holds.
-
-		SMachine.reset();
 		assertTrue("State empty not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("empty"));
 		// TODO: Check that the action holds.
 

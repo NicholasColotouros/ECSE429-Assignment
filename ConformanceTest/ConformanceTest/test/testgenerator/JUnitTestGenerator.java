@@ -2,8 +2,10 @@ package testgenerator;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
+import ca.mcgill.ecse429.conformancetest.statemodel.State;
 import ca.mcgill.ecse429.conformancetest.statemodel.StateMachine;
 import ca.mcgill.ecse429.conformancetest.statemodel.Transition;
 import ca.mcgill.ecse429.conformancetest.statemodel.persistence.PersistenceStateMachine;
@@ -39,6 +41,7 @@ public class JUnitTestGenerator
 	
 	/**
 	 * Uses the graph generated and makes the round trips using DFS.
+	 * Uses DFS on the edges
 	 * @return An arraylist of all paths for the test.
 	 */
 	private ArrayList<ArrayList<Transition>> GeneratePaths()
@@ -67,7 +70,7 @@ public class JUnitTestGenerator
 				}
 			}
 			currentPath.add(currentNode.Value);
-
+			
 			boolean LeafReached = true;
 			for(TransitionNode neighbour : currentNode.Children)
 			{
@@ -78,17 +81,35 @@ public class JUnitTestGenerator
 					LeafReached = false;
 				}
 			}
-			
+				
 			// If we reached a leaf in our round trip path tree, save a copy of the path
 			if(LeafReached)
 			{
 				paths.add(new ArrayList<Transition>(currentPath));
+			}
+			
+			// If we've arrived somewhere we've already been, get rid of that transition
+			if(HasReturnedToAPrevNode(currentPath))
+			{
+				currentPath.remove(currentPath.size() - 1);
 			}
 		}
 		
 		return paths;
 	}
 	
+	private boolean HasReturnedToAPrevNode(ArrayList<Transition> currentPath) 
+	{
+		String currentState = currentPath.get(currentPath.size() - 1).getTo().getName();
+		
+		for(Transition t : currentPath)
+		{
+			if(t.getFrom().getName().equals(currentState))
+				return true;
+		}
+		return false;
+	}
+
 	public static void main(String[] args) 
 	{
 		JUnitTestGenerator JUTG;
