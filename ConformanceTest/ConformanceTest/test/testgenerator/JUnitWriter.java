@@ -20,8 +20,8 @@ public class JUnitWriter
 	private ArrayList<ArrayList<Transition>> Paths; // Arraylist of the paths to be made into test methods
 	private static String GVarName = "SMachine"; // The global variable name to be used that holds the state machine
 
-	private static String ConditionTODO = "// TODO: The above transition has a condition.";
-	private static String ActionTODO = "// TODO: Check that the action holds.";
+	private static String ConditionTODO = "// TODO: The above transition has a condition: ";
+	private static String ActionTODO = "// TODO: Check that the action holds: ";
 	
 	
 	public JUnitWriter(String packageName, String className, ArrayList<ArrayList<Transition>> paths) 
@@ -140,12 +140,12 @@ public class JUnitWriter
 				String action = t.getAction();
 				if(condition != null && !condition.equals(""))
 				{
-					ret = ret + indent(indentation) + ConditionTODO + "\n";
+					ret = ret + indent(indentation) + ConditionTODO + t.getCondition() + "\n";
 				}
 				
 				if(action != null && !action.equals(""))
 				{
-					ret = ret + indent(indentation) + ActionTODO + "\n";
+					ret = ret + indent(indentation) + ActionTODO + t.getAction() + "\n";
 				}
 				ret = ret + "\n";
 			}
