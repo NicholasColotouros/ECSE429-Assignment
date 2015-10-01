@@ -34,6 +34,7 @@ public class JUnitWriter
 		
 		// Import basic JUnit stuff
 		PackageImports.add("static org.junit.Assert.*");
+		PackageImports.add("org.junit.After");
 		PackageImports.add("org.junit.Before");
 		PackageImports.add("org.junit.Test");
 	}
@@ -69,10 +70,19 @@ public class JUnitWriter
 		output = output + "\n" + indent(indentation) + "@Before\n";
 		output = output + indent(indentation) + "public void Setup() {" + "\n";
 		indentation++;
+		output = output + indent(indentation) + "assertNull(" + GVarName + ");\n";
 		output = output + indent(indentation) + GVarName + " = new " + ClassName + "();\n";
 		indentation--;
 		output = output + indent(indentation) + "}\n\n";
 
+		output = output + "\n" + indent(indentation) + "@After\n";
+		output = output + indent(indentation) + "public void Teardown() {" + "\n";
+		indentation++;
+		output = output + indent(indentation) + GVarName + " = null;\n";
+		output = output + indent(indentation) + "assertNull(" + GVarName + ");\n";
+		indentation--;
+		output = output + indent(indentation) + "}\n\n";
+		
 		// Add the tests
 		output = output + "\n" + GenerateTestCases(indentation);
 		
