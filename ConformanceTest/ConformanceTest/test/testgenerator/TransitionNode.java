@@ -21,10 +21,9 @@ public class TransitionNode
 		Children = new ArrayList<TransitionNode>();
 	}
 	
-	// Yes I know how the name might be interpreted. The method name is descriptive and hilarious.
-	public void MakeChildren(ArrayList<TransitionNode> allNodes)
+	public void FindChildren(ArrayList<TransitionNode> allNodes)
 	{
-		// Find the children (to == from)
+		// Find the children (parent.to == child.from)
 		for(TransitionNode t : allNodes)
 		{
 			if(Value.getTo().getName().equals(t.Value.getFrom().getName()))
@@ -54,7 +53,7 @@ public class TransitionNode
 		
 		for(TransitionNode n : allNodes)
 		{
-			n.MakeChildren(allNodes);
+			n.FindChildren(allNodes);
 		}
 		
 		return startNode;

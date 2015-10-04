@@ -1,5 +1,7 @@
 package testgenerator;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,8 +22,8 @@ public class JUnitWriter
 	private ArrayList<ArrayList<Transition>> Paths; // Arraylist of the paths to be made into test methods
 	private static String GVarName = "SMachine"; // The global variable name to be used that holds the state machine
 
-	private static String ConditionTODO = "// TODO: The above transition has a condition: ";
-	private static String ActionTODO = "// TODO: Check that the action holds: ";
+	private static String ConditionComment = "// The following transition has a condition: ";
+	private static String ActionComment = "// Check that the action holds: ";
 	
 	
 	public JUnitWriter(String packageName, String className, ArrayList<ArrayList<Transition>> paths) 
@@ -91,7 +93,7 @@ public class JUnitWriter
 		output = output + indent(indentation) + "}";
 		
 		// Write the file
-		String filepath = "test\\" + PackageName.replace('.', '\\') + "\\";
+		String filepath = "test/" + PackageName.replace('.', '/') + "/";
 		File file = new File(filepath);
 		file.mkdirs();
 		
@@ -115,6 +117,18 @@ public class JUnitWriter
 		return output;
 	}
 	
+	private String GenerateStateSequences(ArrayList<Transition> path) 
+	{	
+		ArrayList<String> states = new ArrayList();
+		
+		for(Transition t : path)
+		{
+			states.add(t.getTo().getName());
+		}
+		
+		return String.join(" -> ", states);
+	}
+	
 	private String GenerateTestCases(int indentation)
 	{
 		String ret = "";
@@ -125,12 +139,20 @@ public class JUnitWriter
 		{
 			tripNumber++;
 			ret = ret + indent(indentation) + "@Test\n";
-			ret = ret + indent(indentation) + "public void testTrip" + tripNumber + "() {\n";
+			ret = ret + indent(indentation) + "public void testTrip" + tripNumber + "() { //" + GenerateStateSequences(path) + "\n";
 			indentation++;
 	
 			// For each transition in the path
 			for(Transition t : path)
 			{
+				// Check the condition before executing transition
+				String condition = t.getCondition();
+				if(condition != null && !condition.equals(""))
+				{
+					ret = ret + indent(indentation) + ConditionComment + t.getCondition() + "\n";
+					ret += GenerateAssertStatement(t.getCondition(), "condition", indentation);
+				}
+				
 				// If we see @ it must be the constructor
 				if(t.getEvent().contains("@"))
 				{
@@ -145,17 +167,13 @@ public class JUnitWriter
 				ret = ret + indent(indentation) + "assertTrue(\"State " + t.getTo().getName() + " not reached. The current state is: \" + " + GVarName + ".getState(), "
 						+ GVarName + ".getState().toString().equals(\"" + t.getTo().getName() + "\"));\n";
 				
-				// Now check for whether or not we're inserting comments
-				String condition = t.getCondition();
-				String action = t.getAction();
-				if(condition != null && !condition.equals(""))
-				{
-					ret = ret + indent(indentation) + ConditionTODO + t.getCondition() + "\n";
-				}
 				
+				// Check the actions after transition
+				String action = t.getAction();
 				if(action != null && !action.equals(""))
 				{
-					ret = ret + indent(indentation) + ActionTODO + t.getAction() + "\n";
+					ret = ret + indent(indentation) + ActionComment + t.getAction() + "\n";
+					ret += GenerateAssertStatement(t.getAction(), "action", indentation);
 				}
 				ret = ret + "\n";
 			}
@@ -164,5 +182,69 @@ public class JUnitWriter
 			ret = ret + "\n" + indent(indentation) + "}\n\n";
 		}
 		return ret;
+	}
+	
+	private void TrimStringArray (String[] array) {
+		for (int i=0; i<array.length; i++) {
+			array[i] = array[i].trim();
+		}
+	}
+	
+	private String GenerateAssertStatement(String statementsString, String conditionOrAction, int indentation) {
+		String output = "";
+		String[] statements = statementsString.split(";");
+		TrimStringArray(statements);
+		
+		for (String eachStatement: statements) {
+			String[] tokens = eachStatement.split(" ");
+			TrimStringArray(tokens);
+			
+			//determine if the assert statement can be easily generated, if yes, determine if it is a boolean or int
+			if (tokens.length == 3 && !tokens[0].substring(0, 2).equalsIgnoreCase("is") &&
+					!tokens[0].substring(0, 3).equalsIgnoreCase("!is") &&
+					(tokens[2].equalsIgnoreCase("true") || tokens[2].equalsIgnoreCase("false"))) { //boolean
+				
+				output += indent(indentation) + "assertTrue(\"" + conditionOrAction.substring(0, 1).toUpperCase()
+						+ conditionOrAction.substring(1) + ": " + eachStatement + " was not satisfied.\", ";
+				
+				output += GVarName + ".is" + tokens[0].substring(0, 1).toUpperCase() + tokens[0].substring(1) + "() ";
+				
+				output += (tokens[1].equals("=") ? "==" : tokens[1]) + " " + tokens[2]  + ");\n";
+				
+			} else if (tokens.length == 3 && !tokens[0].substring(0, 3).equalsIgnoreCase("get") 
+					&& isInteger(tokens[2])) { //int
+				
+				output += indent(indentation) + "assertTrue(\"" + conditionOrAction.substring(0, 1).toUpperCase()
+						+ conditionOrAction.substring(1) + ": " + eachStatement + " was not satisfied.\", ";
+				
+				output += GVarName + ".get" + tokens[0].substring(0, 1).toUpperCase() + tokens[0].substring(1) + "() ";
+				
+				output += (tokens[1].equals("=") ? "==" : tokens[1]) + " " + tokens[2]  + ");\n";
+				
+			} else {// too difficult to generate automatically
+				
+				output += indent(indentation) + "//@todo manually: Check " + conditionOrAction + " " + eachStatement + "\n";
+				
+			}
+		}
+		
+		return output;
+	}
+	
+	private static boolean isInteger(String str) {
+	    if(str.isEmpty()) return false;
+	    for(int i = 0; i < str.length(); i++) {
+	        if(i == 0 && str.charAt(i) == '-') { // in case it's a negative number
+	            if(str.length() == 1) {
+	            	return false;
+	            } else {
+	            	continue;
+	            }
+	        }
+	        if(Character.digit(str.charAt(i),10) < 0) {
+	        	return false;
+	        }
+	    }
+	    return true;
 	}
 }

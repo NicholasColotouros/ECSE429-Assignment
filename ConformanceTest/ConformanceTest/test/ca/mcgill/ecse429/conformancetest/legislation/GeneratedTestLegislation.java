@@ -23,73 +23,83 @@ public class GeneratedTestLegislation {
 
 
 	@Test
-	public void testTrip1() {
+	public void testTrip1() { //inPreparation -> inHouseOfCommons -> finalized
 		SMachine = new Legislation();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
-		// TODO: Check that the action holds: isCommonsBill = true;
+		// Check that the action holds: isCommonsBill = true;
+		//@todo manually: Check action isCommonsBill = true
 
 		SMachine.introduceInHouse();
 		assertTrue("State inHouseOfCommons not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inHouseOfCommons"));
 
+		// The following transition has a condition: !getIsCommonsBill()
+		//@todo manually: Check condition !getIsCommonsBill()
 		SMachine.votePasses();
 		assertTrue("State finalized not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("finalized"));
-		// TODO: The above transition has a condition: !getIsCommonsBill()
 
 
 	}
 
 	@Test
-	public void testTrip2() {
+	public void testTrip2() { //inPreparation -> inHouseOfCommons -> inSenate -> finalized
 		SMachine = new Legislation();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
-		// TODO: Check that the action holds: isCommonsBill = true;
+		// Check that the action holds: isCommonsBill = true;
+		//@todo manually: Check action isCommonsBill = true
 
 		SMachine.introduceInHouse();
 		assertTrue("State inHouseOfCommons not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inHouseOfCommons"));
 
+		// The following transition has a condition: getIsCommonsBill()
+		//@todo manually: Check condition getIsCommonsBill()
 		SMachine.votePasses();
 		assertTrue("State inSenate not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inSenate"));
-		// TODO: The above transition has a condition: getIsCommonsBill()
 
+		// The following transition has a condition: getIsCommonsBill()
+		//@todo manually: Check condition getIsCommonsBill()
 		SMachine.votePasses();
 		assertTrue("State finalized not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("finalized"));
-		// TODO: The above transition has a condition: getIsCommonsBill()
 
 
 	}
 
 	@Test
-	public void testTrip3() {
+	public void testTrip3() { //inPreparation -> inHouseOfCommons -> inSenate -> inHouseOfCommons
 		SMachine = new Legislation();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
-		// TODO: Check that the action holds: isCommonsBill = true;
+		// Check that the action holds: isCommonsBill = true;
+		//@todo manually: Check action isCommonsBill = true
 
 		SMachine.introduceInHouse();
 		assertTrue("State inHouseOfCommons not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inHouseOfCommons"));
 
+		// The following transition has a condition: getIsCommonsBill()
+		//@todo manually: Check condition getIsCommonsBill()
 		SMachine.votePasses();
 		assertTrue("State inSenate not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inSenate"));
-		// TODO: The above transition has a condition: getIsCommonsBill()
 
+		// The following transition has a condition: !getIsCommonsBill()
+		//@todo manually: Check condition !getIsCommonsBill()
 		SMachine.votePasses();
 		assertTrue("State inHouseOfCommons not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inHouseOfCommons"));
-		// TODO: The above transition has a condition: !getIsCommonsBill()
 
 
 	}
 
 	@Test
-	public void testTrip4() {
+	public void testTrip4() { //inPreparation -> inHouseOfCommons -> inSenate -> inPreparation
 		SMachine = new Legislation();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
-		// TODO: Check that the action holds: isCommonsBill = true;
+		// Check that the action holds: isCommonsBill = true;
+		//@todo manually: Check action isCommonsBill = true
 
 		SMachine.introduceInHouse();
 		assertTrue("State inHouseOfCommons not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inHouseOfCommons"));
 
+		// The following transition has a condition: getIsCommonsBill()
+		//@todo manually: Check condition getIsCommonsBill()
 		SMachine.votePasses();
 		assertTrue("State inSenate not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inSenate"));
-		// TODO: The above transition has a condition: getIsCommonsBill()
 
 		SMachine.voteFails();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
@@ -98,10 +108,11 @@ public class GeneratedTestLegislation {
 	}
 
 	@Test
-	public void testTrip5() {
+	public void testTrip5() { //inPreparation -> inHouseOfCommons -> inPreparation
 		SMachine = new Legislation();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
-		// TODO: Check that the action holds: isCommonsBill = true;
+		// Check that the action holds: isCommonsBill = true;
+		//@todo manually: Check action isCommonsBill = true
 
 		SMachine.introduceInHouse();
 		assertTrue("State inHouseOfCommons not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inHouseOfCommons"));
@@ -113,14 +124,16 @@ public class GeneratedTestLegislation {
 	}
 
 	@Test
-	public void testTrip6() {
+	public void testTrip6() { //inPreparation -> inSenate
 		SMachine = new Legislation();
 		assertTrue("State inPreparation not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inPreparation"));
-		// TODO: Check that the action holds: isCommonsBill = true;
+		// Check that the action holds: isCommonsBill = true;
+		//@todo manually: Check action isCommonsBill = true
 
 		SMachine.introduceInSenate();
 		assertTrue("State inSenate not reached. The current state is: " + SMachine.getState(), SMachine.getState().toString().equals("inSenate"));
-		// TODO: Check that the action holds: isCommonsBill = false;
+		// Check that the action holds: isCommonsBill = false;
+		//@todo manually: Check action isCommonsBill = false
 
 
 	}
