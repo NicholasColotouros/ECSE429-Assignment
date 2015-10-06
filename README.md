@@ -1,11 +1,11 @@
 # ECSE429-Assignment
 Generates tests for a given java class based on an XML file which conforms to the State Machine model defined in the instructions.
 
-## SETUP:
+### SETUP:
 
 For the project, make sure you have the latest version of Eclipse (Mars), as it is needed to view the metamodel provided.
 
-## TASKS:
+### TODO:
 
 Below will be the tasks assigned to each team member.
 
