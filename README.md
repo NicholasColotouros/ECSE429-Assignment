@@ -9,14 +9,14 @@ For the project, make sure you have the latest version of Eclipse (Mars), as it 
 
 Below will be the tasks assigned to each team member.
 
-Henry:
+**Henry:**
 * Things to do
 
-Nicholas:
+**Nicholas:**
 * Things to do
 
-Future Teammate 1:
+**Future Teammate 1:**
 * Things to do
 
-Future Teammate 2:
+**Future Teammate 2:**
 * Things to do
